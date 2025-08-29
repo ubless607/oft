@@ -16,7 +16,7 @@ Large text-to-image diffusion models have impressive capabilities in generating 
 
 **OFT is now integrated into [Hugging Face PEFT](https://github.com/huggingface/peft)! For the conceptual guide, please also refer to [Hugging Face PEFT Doc](https://huggingface.co/docs/peft/en/conceptual_guides/oft).**
 
-**OFT and QOFT is now integrated into [Llama Factory]([https://github.com/huggingface/peft](https://github.com/hiyouga/LLaMA-Factory/tree/main/examples/extras/oft))!**
+**OFT and QOFT is now integrated into [Llama Factory](https://github.com/hiyouga/LLaMA-Factory/tree/main/examples/extras/oft)!**
 
 ## Update
 - **2023.6.23**: initial commit. Code for running controllable generation (ControlNet-like tasks) and subject-driven generation (Dreambooth-like tasks).
