@@ -156,9 +156,6 @@ export OUTPUT_DIR="log_oft/${name}"
 export INSTANCE_DIR="../data/dreambooth/${selected_subject}"
 export CLASS_DIR="data/class_data/${class_token}"
 
-. /home/zqiu/miniconda3/etc/profile.d/conda.sh
-conda activate oft
-
 accelerate launch train_dreambooth_oft.py \
   --pretrained_model_name_or_path=$MODEL_NAME  \
   --instance_data_dir=$INSTANCE_DIR \
@@ -183,4 +180,4 @@ accelerate launch train_dreambooth_oft.py \
   --num_class_images=200 \
   --eps=$eps \
   --r=$r \
-  --coft
+  #--coft

@@ -476,6 +476,7 @@ class OFTLinearLayer(nn.Module):
         # fix filter
         fix_filt = attn.weight.data
         fix_filt = torch.transpose(fix_filt, 0, 1)
+        block_diagonal_matrix = block_diagonal_matrix.to(device=fix_filt.device, dtype=dtype)
         filt = torch.mm(block_diagonal_matrix, fix_filt.to(dtype))
         filt = torch.transpose(filt, 0, 1)
  

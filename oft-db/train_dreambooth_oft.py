@@ -1041,7 +1041,26 @@ def main(args):
         pipeline = pipeline.to(accelerator.device)
 
         # load attention processors
-        pipeline.unet.load_attn_procs(args.output_dir)
+        # pipeline.unet.load_attn_procs(args.output_dir)
+
+        # Monkey patch: ValueError: It does not seem to be in the correct format expected by LoRA or custom DIffusion training.
+        oft_attn_procs = {}
+        for name in pipeline.unet.attn_processors.keys():
+            cross_attention_dim = None if name.endswith("attn1.processor") else pipeline.unet.config.cross_attention_dim
+            if name.startswith("mid_block"):
+                hidden_size = pipeline.unet.config.block_out_channels[-1]
+            elif name.startswith("up_blocks"):
+                block_id = int(name[len("up_blocks.")])
+                hidden_size = list(reversed(pipeline.unet.config.block_out_channels))[block_id]
+            elif name.startswith("down_blocks"):
+                block_id = int(name[len("down_blocks.")])
+                hidden_size = pipeline.unet.config.block_out_channels[block_id]
+            oft_attn_procs[name] = OFTAttnProcessor(hidden_size=hidden_size, cross_attention_dim=cross_attention_dim, eps=args.eps, r=args.r, is_coft=args.coft)
+        pipeline.unet.set_attn_processor(oft_attn_procs)
+        state_dict = torch.load(os.path.join(args.output_dir, "pytorch_lora_weights.bin"), map_location=accelerator.device)
+        for name, proc in pipeline.unet.attn_processors.items():
+            proc_state = {k[len(f"{name}."):]: v for k, v in state_dict.items() if k.startswith(f"{name}.")}
+            proc.load_state_dict(proc_state)
 
         # run inference
         if args.validation_prompt and args.num_validation_images > 0:

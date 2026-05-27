@@ -2,10 +2,12 @@
 *.log
 
 # Ignore folder
+data/
 oft-control/log/
 oft-control/oft_butterfly.py
 oft-db/data/
 oft-db/log_cot/
+oft-db/log_oft/
 oft-db/oft_utils/attention_processor_butterfly.py
 oft-t2i/sddata_orig/
 oft-t2i/sddata/
