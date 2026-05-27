@@ -8,6 +8,23 @@
   <a href="https://arxiv.org/abs/2306.07280">arXiv</a> / <a href="https://oft.wyliu.com">Project Page</a>
 </p>
 
+## Important Note
+
+If you use **diffusers==0.17.1** with an older NumPy version, you may see this error when running subject-driven generation (DreamBooth-like) training:
+
+```text
+ValueError: step must be greater than zero
+```
+
+Fix it by editing `scheduling_dpmsolver_multistep.py` in the diffusers library:
+
+```python
+# before
+np.linspace(0, self.config.num_train_timesteps - 1 - clipped_idx, ...)
+
+# after
+np.linspace(0, self.config.num_train_timesteps - 1 - clipped_idx.item(), ...)
+```
 
 
 ## Introduction
