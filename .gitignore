@@ -14,6 +14,7 @@ oft-t2i/sddata/
 lightning_logs/
 log/
 fbd/
+oft-db/log_cara/
 
 # Ignore the 'build' folder
 build/
@@ -31,3 +32,4 @@ build/
 *.sub
 
 __pycache__
+**/.vscode
