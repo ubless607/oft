@@ -979,7 +979,7 @@ def parse_args():
     )
     parser.add_argument("--strict", action="store_true", help="Fail on missing folders instead of skipping them in single-epoch mode.")
     parser.add_argument("--unique-token", default="qwe", help="Unique token used in generated prompts when metadata is absent.")
-    parser.add_argument("--max-images", type=int, default=0, help="Maximum generated images per prompt/epoch to score. Use 0 for all images.")
+    parser.add_argument("--max-images", type=int, default=4, help="Maximum generated images per prompt/epoch to score. Use 0 for all images.")
     return parser.parse_args()
 
 
