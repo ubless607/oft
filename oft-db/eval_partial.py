@@ -1202,12 +1202,29 @@ def infer_final_results_file(image_dir):
     return f"{name}_final_results.csv"
 
 
+def load_completed_runs(final_results_file):
+    completed = set()
+    if not os.path.isfile(final_results_file) or os.path.getsize(final_results_file) == 0:
+        return completed
+    with open(final_results_file, newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            run = row.get("run", "")
+            if run and all(parse_metric_float(row.get(m)) is not None for m in metric_columns):
+                completed.add(run)
+    return completed
+
+
 def evaluate_all_epochs_wide(metrics, args, epochs, epochs_label):
     records = prompt_records(args.image_dir, metadata_path=args.metadata, unique_token=args.unique_token)
     if not records:
         raise ValueError(f"No prompt folders found under {args.image_dir}")
 
     validate_reference_images(metrics, records, args.reference_dir)
+
+    completed_runs = load_completed_runs(args.final_results_file)
+    if completed_runs:
+        print(f"Resuming: {len(completed_runs)} run(s) already in {args.final_results_file}, will skip them.", flush=True)
 
     rows_by_key = {}
     print(
@@ -1216,8 +1233,15 @@ def evaluate_all_epochs_wide(metrics, args, epochs, epochs_label):
     )
 
     for record in records:
+        if record["data_dir"] in completed_runs:
+            print(f"--- {record['data_dir']} SKIPPED (already in final results) ---", flush=True)
+            continue
         run_dir = record.get("run_dir", os.path.join(args.image_dir, record["data_dir"]))
         available = set(list_available_epochs(run_dir))
+        if epochs is not None and not available.issuperset(epochs):
+            missing = sorted(set(epochs) - available)
+            print(f"--- {record['data_dir']} SKIPPED (missing epochs: {missing[:5]}{'...' if len(missing) > 5 else ''}) ---", flush=True)
+            continue
         candidate_epochs = sorted(available & set(epochs)) if epochs is not None else sorted(available)
         print(f"--- {record['data_dir']} ({len(candidate_epochs)} epochs) ---", flush=True)
 
