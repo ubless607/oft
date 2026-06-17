@@ -1218,6 +1218,9 @@ def evaluate_all_epochs_wide(metrics, args, epochs, epochs_label):
     for record in records:
         run_dir = record.get("run_dir", os.path.join(args.image_dir, record["data_dir"]))
         candidate_epochs = epochs if epochs is not None else list_available_epochs(run_dir)
+        if len(candidate_epochs) < 51:
+            print(f"--- {record['data_dir']} skipped ({len(candidate_epochs)}/51 epochs) ---", flush=True)
+            continue
         print(f"--- {record['data_dir']} ({len(candidate_epochs)} epochs) ---", flush=True)
 
         for metric in metrics:
@@ -1268,6 +1271,10 @@ def evaluate_single_epoch_wide(metrics, args, epoch):
 
     for record in records:
         run_dir = record.get("run_dir", os.path.join(args.image_dir, record["data_dir"]))
+        available = list_available_epochs(run_dir)
+        if len(available) < 51:
+            print(f"--- {record['data_dir']} skipped ({len(available)}/51 epochs) ---", flush=True)
+            continue
         print(f"--- {record['data_dir']} ---", flush=True)
 
         for metric in metrics:
