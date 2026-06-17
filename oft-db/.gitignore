@@ -3,4 +3,6 @@
 
 # log files
 /log
+/logs
 /wandb
+*.csv
